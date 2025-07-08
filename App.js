@@ -6,11 +6,14 @@ import { Provider } from './src/context/BlogContext';
 import ShowScreen from './src/screens/ShowScreen';
 import CreateScreen from './src/screens/CreateScreen';
 import EditScreen from './src/screens/EditScreen';
+import { SettingsProvider } from "./src/context/SettingsContext";
+import SettingsScreen from './src/screens/SettingsScreen';
 const Navigator = createStackNavigator({
   IndexScreen:IndexScreen ,
   ShowScreen:ShowScreen,
   CreateScreen:CreateScreen,
-  EditScreen:EditScreen
+  EditScreen:EditScreen,
+  SettingsScreen:SettingsScreen
 },{
   initialRouteName:"IndexScreen",
   defaultNavigationOptions:{
@@ -22,5 +25,5 @@ const Navigator = createStackNavigator({
 
 const App =  createAppContainer(Navigator)
 export default () =>{
-  return <Provider><App/></Provider>;
+  return <SettingsProvider><Provider><App/></Provider></SettingsProvider>;
 }

@@ -1,63 +1,65 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Text , FlatList, Button , TouchableOpacity} from 'react-native';
-import {Context} from '../context/BlogContext';
-import { useContext } from 'react';
-import {Feather} from "@expo/vector-icons"
+import React, { useEffect, useContext } from 'react';
+import { StyleSheet, FlatList , View} from 'react-native';
+import { Card, Title, IconButton } from 'react-native-paper';
+import { Context } from '../context/BlogContext';
+import { Feather } from '@expo/vector-icons';
 
-const IndexScreen = ({navigation}) => {
-  const {state , removeBlogPost , getBlogPost} = useContext(Context)
-  useEffect(()=>{
-    getBlogPost()
-    navigation.addListener("didFocus" , ()=>{
-      getBlogPost()
-    })
-    return ()=>{listener.remove()}
-  },[])
+const IndexScreen = ({ navigation }) => {
+  const { state, removeBlogPost, getBlogPost } = useContext(Context);
+
+  useEffect(() => {
+    getBlogPost();
+    const listener = navigation.addListener('didFocus', () => {
+      getBlogPost();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
-    <View>
-          <FlatList 
-            data={state} 
-            keyExtractor={(post) => post.id} 
-            renderItem={({ item }) => {
-              return (
-                <TouchableOpacity onPress={()=>{navigation.navigate("ShowScreen",{id:item.id})}}> 
-                  <View style={styles.row}>
-                    <Text style={styles.title}>{item.title} - {item.id}</Text>
-                    <TouchableOpacity onPress={()=>{removeBlogPost(item.id)}}>
-                      <Feather style={styles.icon} name='trash' />
-                    </TouchableOpacity>
-                  </View>
-                </TouchableOpacity>
-                )
-            }}
+    <FlatList
+      data={state}
+      keyExtractor={(post) => post.id.toString()}
+      renderItem={({ item }) => (
+        <Card style={styles.card} onPress={() => navigation.navigate('ShowScreen', { id: item.id })}>
+          <Card.Title
+            title={item.title}
+            subtitle={`ID: ${item.id}`}
+            right={(props) => (
+              <IconButton
+                {...props}
+                icon={() => <Feather name="trash" size={24} color="red" />}
+                onPress={() => removeBlogPost(item.id)}
+              />
+            )}
           />
-    </View>
+        </Card>
+      )}
+    />
   );
 };
-IndexScreen.navigationOptions = ({navigation}) =>{
+IndexScreen.navigationOptions = ({ navigation }) => {
   return {
     headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('CreateScreen')}>
-        <Feather name="plus" size={30} />
-      </TouchableOpacity>
-    )
-  }
-}
+      <View style={{ flexDirection: 'row', marginRight: 10 }}>
+        <IconButton
+          icon={() => <Feather name="plus" size={30} />}
+          onPress={() => navigation.navigate('CreateScreen')}
+        />
+        <IconButton
+          icon={() => <Feather name="settings" size={28} />}
+          onPress={() => navigation.navigate('SettingsScreen')}
+        />
+      </View>
+    ),
+  };
+};
+
 const styles = StyleSheet.create({
-  row :{
-    flexDirection:"row" ,
-    justifyContent:"space-between",
-    borderTopWidth :1,
-    paddingVertical:20,
-    paddingHorizontal:10,
-    borderColor:"gray"
+  card: {
+    margin: 10,
   },
-  title:{
-    fontSize:18
-  },
-  icon:{
-    fontSize:24
-  }
 });
 
 export default IndexScreen;
